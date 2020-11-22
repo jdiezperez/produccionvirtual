@@ -1,166 +1,151 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script type="text/javascript" src="js/colorpicker.js"></script>
+    <!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+    <script src="js/jquery.knob.min.js"></script>
+    <script>
 
-    //
-    // Conexión con Unreal Engine
-    //
+        //
+        // Conexión con Unreal Engine
+        //
+        
+        var ue4_conn;
 
-    var ue4_conn;
-
-    function setupUEConnection(url) {
-        ue4_conn = new XMLHttpRequest();
-        ue4_conn.open("PUT", url, true);
-        ue4_conn.setRequestHeader("Content-Type", "application/json");
-        ue4_conn.onreadystatechange = function() {
-            if ((ue4_conn.status == 200) || (ue4_conn.status == 0)) {
-                console.log("Actualizado");
-                console.log(ue4_conn.responseText);
-            } else {
-                alert("ERROR: " + ue4_conn.readyState + " - " + ue4_conn.statusText);
+        function setupUEConnection(url) {
+            ue4_conn = new XMLHttpRequest();
+            ue4_conn.open("PUT", url, true);
+            ue4_conn.setRequestHeader("Content-Type", "application/json");
+            ue4_conn.onreadystatechange = function() {
+                if ((ue4_conn.status == 200) || (ue4_conn.status == 0)) {
+                    console.log("Actualizado");
+                    console.log(ue4_conn.responseText);
+                } else {
+                    alert("ERROR: " + ue4_conn.readyState + " - " + ue4_conn.statusText);
+                }
             }
         }
-    }
 
-    function callUEFunction(objectPath, functionName, parameters, generateTransaction) {
-        setupUEConnection('http://localhost:8080/remote/object/call');
-        var data = JSON.stringify (
-            {
-                "objectPath": objectPath,
-                "functionName": functionName,
-                "parameters": parameters,
-                "generateTransaction": generateTransaction
-            }
-        );
-        ue4_conn.send(data);
-    }
-
-    function setUEProperty (objectPath, propertyValue, generateTransaction) {
-        setupUEConnection('http://localhost:8080/remote/object/property');
-        access = (generateTransaction)?"WRITE_TRANSACTION_ACCESS":"WRITE_ACCESS";
-        var data = JSON.stringify (
-            {
-                "objectPath": objectPath,
-                "access": access,
-                "propertyValue": propertyValue
-            }
-        );
-        ue4_conn.send(data);
-    }
-
-    function getUEProperty(objectPath, property=null) {
-        setupUEConnection('http://localhost:8080/remote/object/property');
-        var data;
-        if (property) {
-            data = JSON.stringify (
+        function callUEFunction(objectPath, functionName, parameters, generateTransaction) {
+            setupUEConnection('http://localhost:8080/remote/object/call');
+            var data = JSON.stringify (
                 {
                     "objectPath": objectPath,
-                    "property": property,
-                    "access": "READ_ACCESS",
+                    "functionName": functionName,
+                    "parameters": parameters,
+                    "generateTransaction": generateTransaction
                 }
             );
-        } else {
-            data = JSON.stringify (
+            ue4_conn.send(data);
+        }
+
+        function setUEProperty (objectPath, propertyValue, generateTransaction) {
+            setupUEConnection('http://localhost:8080/remote/object/property');
+            access = (generateTransaction)?"WRITE_TRANSACTION_ACCESS":"WRITE_ACCESS";
+            var data = JSON.stringify (
                 {
                     "objectPath": objectPath,
-                    "access": "READ_ACCESS",
+                    "access": access,
+                    "propertyValue": propertyValue
                 }
-            );  
+            );
+            ue4_conn.send(data);
         }
-        ue4_conn.send(data);
-    }
-    
-    //
-    // Funciones específicas
-    //
 
-    // Luz direccional
+        function getUEProperty(objectPath, property=null) {
+            setupUEConnection('http://localhost:8080/remote/object/property');
+            var data;
+            if (property) {
+                data = JSON.stringify (
+                    {
+                        "objectPath": objectPath,
+                        "property": property,
+                        "access": "READ_ACCESS",
+                    }
+                );
+            } else {
+                data = JSON.stringify (
+                    {
+                        "objectPath": objectPath,
+                        "access": "READ_ACCESS",
+                    }
+                );  
+            }
+            ue4_conn.send(data);
+        }
+        
+        //
+        // Funciones específicas
+        //
 
-    function updateDirectionalLightValue() {
-        rotation = parseFloat(document.getElementById("light_rotation").value);
-        updateDirectionalLight(rotation);
-    }
+        // Luz direccional
 
-    function updateDirectionalLightStep(increment) {
-        rotation = parseFloat(document.getElementById("light_rotation").value);
-        rotation += increment;
-        document.getElementById("light_rotation").value = rotation;
-        updateDirectionalLight(rotation);
-    }
+        function updateDirectionalLightValue() {
+            rotation = parseFloat(document.getElementById("light_rotation").value);
+            updateDirectionalLight(rotation);
+        }
 
-    function updateDirectionalLightOption() {
-        rotation = parseFloat(document.getElementById("daytime").value);
-        updateDirectionalLight(rotation);
-    }
+        function updateDirectionalLightStep(increment) {
+            rotation = parseFloat(document.getElementById("light_rotation").value);
+            rotation += increment;
+            document.getElementById("light_rotation").value = rotation;
+            updateDirectionalLight(rotation);
+        }
 
-    function updateDirectionalLight(value) {
-        callUEFunction(
-            "/Game/BeachScene/Maps/Beach_Lighting.Beach_Lighting:PersistentLevel.Sky_DirectionalLight.LightComponent0",
-            "SetWorldRotation",
-            {
-                "NewRotation": 
+        function updateDirectionalLightOption() {
+            rotation = parseFloat(document.getElementById("daytime").value);
+            updateDirectionalLight(rotation);
+        }
+
+        function updateDirectionalLight(value) {
+            callUEFunction(
+                "/Game/BeachScene/Maps/Beach_Lighting.Beach_Lighting:PersistentLevel.Sky_DirectionalLight.LightComponent0",
+                "SetWorldRotation",
                 {
-                    "Pitch": value
-                }
-            },
-            true
-        );
-    }
+                    "NewRotation": 
+                    {
+                        "Pitch": value
+                    }
+                },
+                true
+            );
+        }
 
-    // Sun Sky
+        // Sun Sky
 
-    function updateSunSkyValue() {
-        hour_of_day = parseFloat(document.getElementById("hour_of_day").value);
-        updateSunSky(hour_of_day);
-    }
-    function updateSunSkyStep(increment) {
-        hour_of_day = parseFloat(document.getElementById("hour_of_day").value);
-        hour_of_day += increment;
-        document.getElementById("hour_of_day").value = hour_of_day;
-        updateSunSky(hour_of_day);
-    }
-    function updateSunSkyOption() {
-        hour_of_day = parseFloat(document.getElementById("daytime_hour").value);
-        updateSunSky(hour_of_day);
-    }
-    function updateSunSky(value) {
-        setUEProperty(
-            "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SunSky_2",
-            {
-                "SolarTime" : value
-            },
-            true
-        );
-    }
+        function updateSunSkyValue() {
+            hour_of_day = parseFloat(document.getElementById("hour_of_day").value);
+            updateSunSky(hour_of_day);
+        }
+        function updateSunSkyStep(increment) {
+            hour_of_day = parseFloat(document.getElementById("hour_of_day").value);
+            hour_of_day += increment;
+            document.getElementById("hour_of_day").value = hour_of_day;
+            updateSunSky(hour_of_day);
+        }
+        function updateSunSkyOption() {
+            hour_of_day = parseFloat(document.getElementById("daytime_hour").value);
+            updateSunSky(hour_of_day);
+        }
+        function updateSunSky(value) {
+            setUEProperty(
+                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SunSky_2",
+                {
+                    "SolarTime" : value
+                },
+                true
+            );
+        }
 
-   // Farola
-   function toggleLamppost() {
-        callUEFunction(
-            "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SpotLuzFarola.LightComponent0",
-            "ToggleVisibility",
-            {},
-            true
-        );
-    }
-
-   // Explosión
-   function explosion() {
-        // Fuego
-        callUEFunction(
-            "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.P_Fire_5.ParticleSystemComponent0",
-            "ToggleVisibility",
-            {},
-            true
-        );
-        // Explosión
-        callUEFunction(
-            "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.P_Explosion_2.ParticleSystemComponent0",
-            "Activate",
-            {},
-            true
-        );
-    }
-
-    
-</script>
+        
+    </script>
+</head>
 
 <body>
 
@@ -189,12 +174,7 @@
         <option value="22">Noche</option>
     </select>
 
-    <hr>
-    <h2>Farola</h2>
-    <input type="button" value="Encender/Apagar" onclick="toggleLamppost();">
-
-    <hr>
-    <h2>Explosion</h2>
-    <input type="button" value="BOOM!" onclick="explosion();">
 
 </body>
+
+</html>
