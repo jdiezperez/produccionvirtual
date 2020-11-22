@@ -1,3 +1,9 @@
+<!--
+    Web remote.
+    Interfaz web con Unreal Engine 4.
+    (C) 2020 Jesús Diez Pérez
+    Puedes utilizar y modificar este código libremente siempre que dejes estás líneas de comentarios iniciales.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -143,7 +149,34 @@
             );
         }
 
-        
+        // Farola
+        function toggleLamppost() {
+            callUEFunction(
+                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SpotLuzFarola.LightComponent0",
+                "ToggleVisibility",
+                {},
+                true
+            );
+        }
+
+        // Explosión
+        function explosion() {
+            // Fuego
+            callUEFunction(
+                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.P_Fire_5.ParticleSystemComponent0",
+                "ToggleVisibility",
+                {},
+                true
+            );
+            // Explosión
+            callUEFunction(
+                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.P_Explosion_2.ParticleSystemComponent0",
+                "Activate",
+                {},
+                true
+            );
+        }
+
     </script>
 </head>
 
@@ -174,6 +207,14 @@
         <option value="22">Noche</option>
     </select>
 
+    <hr>
+    <h2>Farola</h2>
+    <input type="button" value="Encender/Apagar" onclick="toggleLamppost();">
+    <input type="button" value="Encender/Apagar Todas las farolas" onclick="toggleAllLampposts();">
+
+    <hr>
+    <h2>Explosion</h2>
+    <input type="button" value="BOOM!" onclick="explosion();">
 
 </body>
 
