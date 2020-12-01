@@ -97,18 +97,6 @@
             updateDirectionalLight(rotation);
         }
 
-        function updateDirectionalLightStep(increment) {
-            rotation = parseFloat(document.getElementById("light_rotation").value);
-            rotation += increment;
-            document.getElementById("light_rotation").value = rotation;
-            updateDirectionalLight(rotation);
-        }
-
-        function updateDirectionalLightOption() {
-            rotation = parseFloat(document.getElementById("daytime").value);
-            updateDirectionalLight(rotation);
-        }
-
         function updateDirectionalLight(value) {
             callUEFunction(
                 "/Game/BeachScene/Maps/Beach_Lighting.Beach_Lighting:PersistentLevel.Sky_DirectionalLight.LightComponent0",
@@ -123,60 +111,6 @@
             );
         }
 
-        // Sun Sky
-
-        function updateSunSkyValue() {
-            hour_of_day = parseFloat(document.getElementById("hour_of_day").value);
-            updateSunSky(hour_of_day);
-        }
-        function updateSunSkyStep(increment) {
-            hour_of_day = parseFloat(document.getElementById("hour_of_day").value);
-            hour_of_day += increment;
-            document.getElementById("hour_of_day").value = hour_of_day;
-            updateSunSky(hour_of_day);
-        }
-        function updateSunSkyOption() {
-            hour_of_day = parseFloat(document.getElementById("daytime_hour").value);
-            updateSunSky(hour_of_day);
-        }
-        function updateSunSky(value) {
-            setUEProperty(
-                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SunSky_2",
-                {
-                    "SolarTime" : value
-                },
-                true
-            );
-        }
-
-        // Farola
-        function toggleLamppost() {
-            callUEFunction(
-                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SpotLuzFarola.LightComponent0",
-                "ToggleVisibility",
-                {},
-                true
-            );
-        }
-
-        // Explosión
-        function explosion() {
-            // Fuego
-            callUEFunction(
-                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.P_Fire_5.ParticleSystemComponent0",
-                "ToggleVisibility",
-                {},
-                true
-            );
-            // Explosión
-            callUEFunction(
-                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.P_Explosion_2.ParticleSystemComponent0",
-                "Activate",
-                {},
-                true
-            );
-        }
-
     </script>
 </head>
 
@@ -185,36 +119,6 @@
     <h2>Luz Direccional</h2>
     Rotación: <input type="text" id="light_rotation" value="100" size="3">
     <input type="button" value="Actualizar" onclick="updateDirectionalLightValue()">
-    <input type="button" value="-" onclick="updateDirectionalLightStep(-10)">
-    <input type="button" value="+" onclick="updateDirectionalLightStep(10)">
-    <select id="daytime" onchange="updateDirectionalLightOption()">
-        <option value="190">Mañana</option>
-        <option value="250">Mediodía</option>
-        <option value="356">Atardecer</option>
-        <option value="100">Noche</option>
-    </select>
-
-    <hr>
-    <h2>Sun Sky</h2>
-    Hora del día: <input type="text" id="hour_of_day" value="8" size="3">
-    <input type="button" value="Actualizar" onclick="updateSunSkyValue();">
-    <input type="button" value="-" onclick="updateSunSkyStep(-1);">
-    <input type="button" value="+" onclick="updateSunSkyStep(1);">
-    <select id="daytime_hour" onchange="updateSunSkyOption();">
-        <option value="8">Mañana</option>
-        <option value="13">Mediodía</option>
-        <option value="18">Atardecer</option>
-        <option value="22">Noche</option>
-    </select>
-
-    <hr>
-    <h2>Farola</h2>
-    <input type="button" value="Encender/Apagar" onclick="toggleLamppost();">
-    <input type="button" value="Encender/Apagar Todas las farolas" onclick="toggleAllLampposts();">
-
-    <hr>
-    <h2>Explosion</h2>
-    <input type="button" value="BOOM!" onclick="explosion();">
 
 </body>
 
