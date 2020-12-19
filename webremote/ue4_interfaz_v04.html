@@ -150,6 +150,7 @@
         }
 
         // Farola
+        
         function toggleLamppost() {
             callUEFunction(
                 "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.SpotLuzFarola.LightComponent0",
@@ -159,7 +160,17 @@
             );
         }
 
+        function toggleAllLampposts() {
+            callUEFunction(
+                "/Game/EscenaPlayera/M_Playa_WebRemote.M_Playa_WebRemote:PersistentLevel.BP_Interfaz_2",
+                "ToggleAll",
+                {},
+                true
+            );
+        }
+        
         // Explosión
+        
         function explosion() {
             // Fuego
             callUEFunction(
@@ -177,6 +188,8 @@
             );
         }
 
+        // Controles Avanzados
+        
         $(document).ready(function() {
 
             $(".knob").knob({
@@ -248,7 +261,7 @@
     </select>
 
     <hr>
-    <h2>Farola</h2>
+    <h2>Farolas</h2>
     <input type="button" value="Encender/Apagar" onclick="toggleLamppost();">
     <input type="button" value="Encender/Apagar Todas las farolas" onclick="toggleAllLampposts();">
 
